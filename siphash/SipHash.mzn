@@ -63,7 +63,8 @@ predicate DLModularAddition(array[int] of var 0..1: x, array[int] of var 0..1: y
       array[0..n-1] of var -precision..precision: constParts;
       array[1..n-1] of var -precision..precision: negHelper;
       array[1..n-1] of var -precision..precision: constHelper;
-      
+      array[0..n-1] of var 1..bits: corsLog2;
+
       constraint negParts[n-1] = 0;
       constraint constParts[n-1] = precision;
     }
@@ -80,7 +81,7 @@ predicate DLModularAddition(array[int] of var 0..1: x, array[int] of var 0..1: y
       forall(i in 1..n-1)
       (
         if x[i-1] == y[i-1] then
-          2*negParts[i-1] = negHelper[i]
+          2*negParts[i-1] = negHelper[i] /\ corsLog2[i] = bits
           /\
           if x[i-1] == 1 then
             2*constParts[i-1] = 2*constHelper[i] - negHelper[i]
@@ -88,13 +89,17 @@ predicate DLModularAddition(array[int] of var 0..1: x, array[int] of var 0..1: y
             2*constParts[i-1] = 2*constHelper[i] + negHelper[i]
           endif
         else
-          constParts[i-1] = constHelper[i] /\ negParts[i-1] = 0
-        endif  
+          constParts[i-1] = precision /\ negParts[i-1] = 0
+          /\
+          abs(constHelper[i]) > pow(2, corsLog2[i]-1) /\ abs(constHelper[i]) <= pow(2, corsLog2[i])
+        endif
       )
       /\
-      abs(constParts[0] + negParts[0]) >= pow(2, corLog2)
+      abs(constParts[0] + negParts[0]) > pow(2, corsLog2[0]-1)
       /\
-      abs(constParts[0] + negParts[0]) < pow(2, corLog2 + 1);
+      abs(constParts[0] + negParts[0]) <= pow(2, corsLog2[0])
+      /\
+      corLog2 = sum(i in 0..n-1)(bits - corsLog2[i]);
       
       
 predicate difRoundComponent0(array[0..3, 0..63] of var 0..1: inputDif, array[0..3, 0..63] of var 0..1: outputDif, var int: pLog2, int: s, int: t) =
@@ -236,6 +241,7 @@ var 0..bits: DLRoundDLCor0Log2;
 var 0..bits: DLRoundDLCor1Log2;
 var int: DLRoundDifProbLog2;
 
+
 constraint forall(i in 0..r0-1)(difRound(array2d(0..3,0..63, difVars[i,..]), array2d(0..3,0..63, difVars[i+1,..]), pLog2[i]));
 constraint forall(i in 0..r1-1)(linRound(array2d(0..3,0..63, linVars[i,..]), array2d(0..3,0..63, linVars[i+1,..]), corLog2[i]));
 
@@ -244,6 +250,11 @@ array[0..3, 0..63] of var 0..1: afterThirdQuarter;
 constraint leftHalfDifRound(array2d(0..3,0..63, difVars[r0,..]), afterSecondQuarter, DLRoundDifProbLog2);
 constraint DLRoundComponent0(afterSecondQuarter, afterThirdQuarter, DLRoundDLCor0Log2, DLRoundDLCor1Log2, 17,21);
 constraint linRoundComponent1(afterThirdQuarter, array2d(0..3,0..63, linVars[0,..]));
+
+array[0..3, 0..n-1] of var 0..1: DLInputDif = array2d(0..3,0..n-1, afterSecondQuarter);
+array[0..3, 0..n-1] of var 0..1: DLOutputMask = array2d(0..3,0..n-1, afterThirdQuarter);
+
+
 
 constraint sum(i in 0..255)(difVars[0,i]) > 0;
 constraint sum(i in 0..255)(linVars[r1,i]) > 0;
@@ -265,6 +276,14 @@ search_ann = seq_search([
     ]);
 
 solve minimize obj;
+
+%output ["\(DLInputDif[0,..]) \n"];
+%output ["\(DLInputDif[1,..]) \n"];
+%output ["\(DLOutputMask[1,..]) \n"];
+%output ["\n"];
+%output ["\(DLInputDif[2,..]) \n"];
+%output ["\(DLInputDif[3,..]) \n"];
+%output ["\(DLOutputMask[2,..]) \n"];
 
 output ["\(difVars[i,..]) -- D \(pLog2[i]) \n " | i in 0..r0-1];
 output ["\(difVars[r0,..]) -- D \(DLRoundDifProbLog2) \n"];
