@@ -1,3 +1,3 @@
-To ensure efficiency, please enable at least O2 optimization and OR-Tools' in Minizinc free search when solving the above model files.
+To ensure efficiency, please enable at least O2 optimization and OR-Tools' free search option in Minizinc when solving the above model files.
 
 Note: The modeling approach based on Proposition 9 in the paper is not unique. The above model files only provide a reference method. Readers are encouraged to develop their own models to transform the iterative formula in Proposition 9 into a CP/SAT/MILP model. When modeling the 64-bit modular addition in SipHash, to ensure a greater scaling factor, we applied scaling not only at the beginning of the iteration but also during the iteration process. This reduces some accuracy but significantly expands our search space.
