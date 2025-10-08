@@ -1,4 +1,4 @@
 Each folder of a cipher name contains the minizinc model file for RDL or IDL distinguisher search on the cipher. For example, the folder 'alzette' contains the models of SDL and RDL distinguishers search on Alzette. Here is an example for how to solve the models using minizinc command line in Linux: 
-nohup ~/MiniZincIDE-2.8.5-bundle-linux-x86_64/bin/minizinc   --solver com.google.ortools.sat -O2 -v -a  -f -p 64 asconRDL.mzn &
+`nohup ~/MiniZincIDE-2.8.5-bundle-linux-x86_64/bin/minizinc   --solver com.google.ortools.sat -O2 -v -a  -f -p 64 asconRDL.mzn &`
 
 The folders 'asconRDLComp' and 'xoodooRDLAndIDLComp' contains the C++ files for computing the RDL (or IDL) correlation of 3-round or 4-round EM, when the input rotational (or internal) difference and the linear mask on the output rotational (or internal) difference of EM are known. Note that to compile these files, you need to install gurobi and open the option -fopenmp, because we will use openmp to compute the correlation with multi-threads.
