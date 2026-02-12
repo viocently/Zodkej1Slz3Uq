@@ -154,9 +154,9 @@ constraint forall(i in r0+1..r0+r1)(linRound(vars[i,0,..], vars[i,1,..], vars[i+
 var int: pU = sum(i in 0..r0-1)(vals[i]);
 var int: cL = sum(i in r0+1..r0+r1)(2*vals[i]);
 
-var 0..bits: cM;
-constraint abs(vals[r0]) >= pow(2,cM);
-constraint abs(vals[r0]) < pow(2,cM+1);
+var 1..bits: cM;
+constraint abs(vals[r0]) > pow(2,cM-1);
+constraint abs(vals[r0]) <= pow(2,cM);
 
 
 
@@ -173,4 +173,5 @@ output ["\(vars[i,0,..]) -- \(vars[i,1,..]) -- D \(vals[i]) \n" | i in 0..r0-1];
 output ["\(vars[r0,0,..]) -- \(vars[r0,1,..]) \n"];
 output ["\(vars[i,0,..]) -- \(vars[i,1,..]) -- L \(vals[i]) \n" | i in r0+1..r0+r1];
 output ["\(vars[r0+r1+1,0,..]) -- \(vars[r0+r1+1,1,..]) \n"];
+
 output ["\(pU) -- \(cM) -- \(cL) \n"];
