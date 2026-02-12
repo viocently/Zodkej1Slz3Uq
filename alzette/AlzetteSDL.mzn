@@ -160,9 +160,9 @@ var int: cL = sum(i in r0+1..r0+r1)(2*vals[i]);
 %var int: obj = wu*pU + wl*cL - wm*vals[r0];
 
 %constraint 4*vals[r0] > precision;
-var 0..bits: cM;
-constraint abs(vals[r0]) >= pow(2,cM);
-constraint abs(vals[r0]) < pow(2,cM+1);
+var 1..bits: cM;
+constraint abs(vals[r0]) > pow(2,cM-1);
+constraint abs(vals[r0]) <= pow(2,cM);
 
 
 
@@ -207,5 +207,6 @@ output ["\(pU) -- \(cM) -- \(cL) \n"];
 %array[0..n-1] of var 0..1: zDif = array1d(0..n-1, [0,1,1,0,1]);
 %var int: difProbLog2;
 %constraint difModularAddition(xDif, yDif, zDif, difProbLog2);
+
 
 
